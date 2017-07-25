@@ -33,6 +33,8 @@ namespace Passenger.Api
             // Add framework services.
             services.AddScoped<IUserRepository, InMemoryUserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
+            services.AddScoped<IDriverService, DriverSerice>();
 
             services.AddMvc();
         }
