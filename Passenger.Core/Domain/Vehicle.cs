@@ -7,7 +7,12 @@ namespace Passenger.Core.Domain
         public string Brand { get; protected set; }
         public string Name { get; protected set; }
         public int Seats { get; protected set; }
-        public Vehicle(string brand, string name, int seats)
+
+        protected Vehicle()
+        {
+
+        }
+        protected Vehicle(string brand, string name, int seats)
         {
             SetBrand(brand);
             SetName(name);
@@ -26,6 +31,7 @@ namespace Passenger.Core.Domain
             }
             Brand = brand;
         }
+
         private void SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -38,6 +44,7 @@ namespace Passenger.Core.Domain
             }
             Name = name;
         }
+
         private void SetSeats(int seats)
         {
             if (seats < 2)
@@ -54,5 +61,8 @@ namespace Passenger.Core.Domain
             }
             Seats = seats;
         }
+
+        public static Vehicle Create(string brand, string name, int seats)
+            => new Vehicle(brand, name, seats);
     }
 }
