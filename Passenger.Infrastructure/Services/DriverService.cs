@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
@@ -12,25 +13,25 @@ namespace Passenger.Infrastructure.Services
         {
             driverRepository = _driverRepository;
         }
-        public DriverDto Get(Guid userId)
+        public async Task<DriverDto> GetAsync(Guid userId)
         {
-            var driver = _driverRepository.Get(userId);
+            var driver = await _driverRepository.GetAsync(userId);
             return new DriverDto
             {
                 UserId = driver.UserId,
                 Vehicle = driver.Vehicle
             };
         }
-        public void Register(Guid userId)
+        public async Task RegisterAsync(Guid userId)
         {
-            var driver = _driverRepository.Get(userId);
+            var driver = await _driverRepository.GetAsync(userId);
             if(driver != null)
             {
                 throw new Exception($"Driver with already exists.");
             }
             var salt = Guid.NewGuid().ToString("N");
             driver = new Driver(userId);
-            _driverRepository.Add(driver);
+            await _driverRepository.AddAsync(driver);
         }
     }
 }
