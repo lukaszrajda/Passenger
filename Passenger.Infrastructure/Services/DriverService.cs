@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
@@ -9,18 +10,16 @@ namespace Passenger.Infrastructure.Services
     public class DriverSerice : IDriverService
     {
         private readonly IDriverRepository _driverRepository;
-        public DriverSerice(IDriverRepository driverRepository)
+        private readonly IMapper _mapper;
+        public DriverSerice(IDriverRepository driverRepository, IMapper mapper)
         {
-            driverRepository = _driverRepository;
+            _driverRepository = driverRepository;
+            _mapper = mapper;
         }
         public async Task<DriverDto> GetAsync(Guid userId)
         {
             var driver = await _driverRepository.GetAsync(userId);
-            return new DriverDto
-            {
-                UserId = driver.UserId,
-                Vehicle = driver.Vehicle
-            };
+            return _mapper.Map<Driver,DriverDto>(driver);
         }
         public async Task RegisterAsync(Guid userId)
         {

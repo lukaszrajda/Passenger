@@ -38,7 +38,8 @@ namespace Passenger.Api
             services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
             services.AddScoped<IDriverService, DriverSerice>();
             services.AddSingleton(AutoMapperConfig.Initialize());
-
+            services.AddSingleton(AutoMapperConfig.Initialize());
+            
             services.AddMvc();
         }
 
