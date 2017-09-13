@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Passenger.Core\Passenger.Core.csproj"/>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1"/>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.01" />
     <PackageReference Include="AutoMapper" Version="6.1.1"/>
   </ItemGroup>

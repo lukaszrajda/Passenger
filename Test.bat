@@ -1,7 +1,7 @@
-#!/bin/bash
-projects=(Passenger.Tests Passenger.Tests.EndToEnd)
-for project in ${projects[*]}
-do
-  echo Running tests for: $project
-  dotnet test $project/$project.csproj
-done
+set "projects=Passenger.Tests Passenger.Tests.EndToEnd"
+(for %%a in (%projects%) do (
+  echo Running tests %%a
+  dotnet test %%a/%%a.csproj
+  )
+)
+pause
