@@ -16,6 +16,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Passenger.Infrastructure.IoC.Modules;
 using Passenger.Infrastructure.IoC;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Passenger.Api
 {
@@ -46,6 +48,7 @@ namespace Passenger.Api
             // services.AddScoped<IUserService, UserService>();
             // services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
             // services.AddScoped<IDriverService, DriverSerice>();
+            services.AddAuthorization(x => x.AddPolicy("admin", p => p.RequireRole("admin")));
             services.AddMvc();
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -62,6 +65,17 @@ namespace Passenger.Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            var jwtSettings = app.ApplicationServices.GetService<Infrastructure.Settings.JwtSettings>();
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                AutomaticAuthenticate = true,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+                }
+            });
             app.UseMvc();
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }

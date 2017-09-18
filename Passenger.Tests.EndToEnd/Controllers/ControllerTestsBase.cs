@@ -1,9 +1,11 @@
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using Passenger.Api;
+using Passenger.Infrastructure.DTO;
 
 namespace Passenger.Tests.EndToEnd.Controllers
 {
@@ -22,6 +24,14 @@ namespace Passenger.Tests.EndToEnd.Controllers
         {
             var json = JsonConvert.SerializeObject(data);
             return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        protected async Task<UserDto> GetUserAsync(string email)
+        {
+            var response = await Client.GetAsync($"users/{email}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<UserDto>(responseString);
         }
     }
 }

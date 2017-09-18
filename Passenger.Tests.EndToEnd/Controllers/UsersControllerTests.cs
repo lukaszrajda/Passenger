@@ -52,13 +52,5 @@ namespace Passenger.Tests.EndToEnd.Controllers
             user.Email.ShouldBeEquivalentTo(command.Email);
         }
 
-        private async Task<UserDto> GetUserAsync(string email)
-        {
-            var response = await Client.GetAsync($"users/{email}");
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<UserDto>(responseString);
-        }
-
     }
 }

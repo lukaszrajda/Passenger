@@ -10,10 +10,12 @@ namespace Passenger.Infrastructure.Services
     public class DriverSerice : IDriverService
     {
         private readonly IDriverRepository _driverRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public DriverSerice(IDriverRepository driverRepository, IMapper mapper)
+        public DriverSerice(IDriverRepository driverRepository, IUserRepository userRepository, IMapper mapper)
         {
             _driverRepository = driverRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
         public async Task<DriverDto> GetAsync(Guid userId)
@@ -23,12 +25,16 @@ namespace Passenger.Infrastructure.Services
         }
         public async Task RegisterAsync(Guid userId)
         {
+            var user = await _userRepository.GetAsync(userId);
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with id: {userId}, doesn't exists, so you cannot create driver.");
+            }
             var driver = await _driverRepository.GetAsync(userId);
             if(driver != null)
             {
-                throw new Exception($"Driver with already exists.");
+                throw new Exception($"Driver with UserID : {userId} already exists.");
             }
-            var salt = Guid.NewGuid().ToString("N");
             driver = new Driver(userId);
             await _driverRepository.AddAsync(driver);
         }

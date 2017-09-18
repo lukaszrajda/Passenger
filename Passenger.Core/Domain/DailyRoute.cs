@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Passenger.Core.Domain
 {
@@ -10,35 +11,36 @@ namespace Passenger.Core.Domain
         public Route Route { get; protected set; }
         public IEnumerable<PassengerNode> PassengerNodes => _passengerNodes;
         public Driver Driver;
-        public int Seats;
+        public DateTime CreatedAt { get; private set; }
+
         protected DailyRoute()
         {
-            
-        }
-
-        public DailyRoute(Route route, Driver driver)
-        {
             Id = Guid.NewGuid();
-            Route = route;
-            Driver = driver;
-            Seats = driver.Vehicle.Seats;
+            CreatedAt = DateTime.UtcNow;
         }
 
-        public void BookSeat(User user, Node startNode, Node endNode)
+        public void AddPassengerNode(Passenger passenger, Node node)
         {
-            if (Seats < 1)
+            var passengerNode = GetPassengerNode(passenger);
+            if (passengerNode != null)
             {
-                throw new Exception($"You canot book seat. Quantity of seats is too low.");
+                throw new InvalidOperationException($"Node already exists for passenger: '{passenger.UserId}'");
             }
-
-            _passengerNodes.Add(new PassengerNode(
-                startNode,
-                endNode,
-                new Passenger(user.Id)
-            ));
-
-            Seats -= 1;
+            _passengerNodes.Add(PassengerNode.Create(passenger, node));
         }
+
+        public void RemovePassengerNode(Passenger passenger)
+        {
+            var passengerNode = GetPassengerNode(passenger);
+            if (passengerNode == null)
+            {
+                return;
+            }
+            _passengerNodes.Remove(passengerNode);
+        }
+
+        private PassengerNode GetPassengerNode(Passenger passenger)
+            => _passengerNodes.SingleOrDefault(x => x.Passenger.UserId == passenger.UserId);
     }
     
 

@@ -1,0 +1,4 @@
+ operacja logowania
+ test do ekryptera, dla podanego stringa, czy szyfruje
+ podając string secret i secret2 czy są inne hash
+ podając raz secret i drugi raz secret, podając sole, czy są te same hashe - czyli czy logowanie działa
