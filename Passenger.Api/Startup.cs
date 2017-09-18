@@ -15,6 +15,7 @@ using Passenger.Infrastructure.Mappers;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Passenger.Infrastructure.IoC.Modules;
+using Passenger.Infrastructure.IoC;
 
 namespace Passenger.Api
 {
@@ -39,18 +40,16 @@ namespace Passenger.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddScoped<IUserRepository, InMemoryUserRepository>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
-            services.AddScoped<IDriverService, DriverSerice>();
-            services.AddSingleton(AutoMapperConfig.Initialize());
-            
-            services.AddMvc();
 
+            // changed to autofac
+            // services.AddScoped<IUserRepository, InMemoryUserRepository>();
+            // services.AddScoped<IUserService, UserService>();
+            // services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
+            // services.AddScoped<IDriverService, DriverSerice>();
+            services.AddMvc();
             var builder = new ContainerBuilder();
             builder.Populate(services);
-            builder.RegisterModule<CommandModule>();
-            builder.RegisterModule<CommandModule>();
+            builder.RegisterModule(new ContainerModule(Configuration));
             ApplicationContainer = builder.Build();
 
             return new AutofacServiceProvider(ApplicationContainer);

@@ -5,7 +5,7 @@ using Passenger.Infrastructure.DTO;
 
 namespace Passenger.Infrastructure.Services
 {
-    public interface IDriverService
+    public interface IDriverService : IService
     {
          Task<DriverDto> GetAsync(Guid userId);
          Task RegisterAsync(Guid userId);         

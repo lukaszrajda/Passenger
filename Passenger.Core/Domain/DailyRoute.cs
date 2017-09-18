@@ -5,9 +5,10 @@ namespace Passenger.Core.Domain
 {
     public class DailyRoute
     {
+        private ISet<PassengerNode> _passengerNodes = new HashSet<PassengerNode>();
         public Guid Id { get; protected set; }
         public Route Route { get; protected set; }
-        public IEnumerable<PassengerNode> PassengerNodes { get; protected set; }
+        public IEnumerable<PassengerNode> PassengerNodes => _passengerNodes;
         public Driver Driver;
         public int Seats;
         protected DailyRoute()
@@ -30,11 +31,11 @@ namespace Passenger.Core.Domain
                 throw new Exception($"You canot book seat. Quantity of seats is too low.");
             }
 
-            PassengerNode passengerNode = new PassengerNode(
+            _passengerNodes.Add(new PassengerNode(
                 startNode,
                 endNode,
                 new Passenger(user.Id)
-            );
+            ));
 
             Seats -= 1;
         }
