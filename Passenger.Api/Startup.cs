@@ -18,6 +18,7 @@ using Passenger.Infrastructure.IoC.Modules;
 using Passenger.Infrastructure.IoC;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Passenger.Infrastructure.Settings;
 
 namespace Passenger.Api
 {
@@ -49,6 +50,7 @@ namespace Passenger.Api
             // services.AddScoped<IDriverRepository, InMemoryDriverRepository>();
             // services.AddScoped<IDriverService, DriverSerice>();
             services.AddAuthorization(x => x.AddPolicy("admin", p => p.RequireRole("admin")));
+            services.AddMemoryCache();
             services.AddMvc();
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -65,7 +67,7 @@ namespace Passenger.Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            var jwtSettings = app.ApplicationServices.GetService<Infrastructure.Settings.JwtSettings>();
+            var jwtSettings = app.ApplicationServices.GetService<JwtSettings>();
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 AutomaticAuthenticate = true,
@@ -76,6 +78,13 @@ namespace Passenger.Api
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 }
             });
+
+            var generalSettings = app.ApplicationServices.GetService<GeneralSettings>();
+            if (generalSettings.SeedData)
+            {
+                var dataInitializer = app.ApplicationServices.GetRequiredService<IDataInitializer>();
+                dataInitializer.SeedAsync();
+            }
             app.UseMvc();
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }

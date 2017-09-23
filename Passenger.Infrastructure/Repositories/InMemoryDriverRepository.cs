@@ -13,7 +13,7 @@ namespace Passenger.Infrastructure.Repositories
         public async Task<Driver> GetAsync(Guid userId)
             => await Task.FromResult(_drivers.SingleOrDefault(x => x.UserId == userId));
 
-        public async Task<IEnumerable<Driver>> GetAllAsync()
+         public async Task <IEnumerable<Driver>> BrowseAsync()
             => await Task.FromResult(_drivers);
 
         public async Task AddAsync(Driver driver)

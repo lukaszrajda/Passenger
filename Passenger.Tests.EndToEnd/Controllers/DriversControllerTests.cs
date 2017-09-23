@@ -13,17 +13,8 @@ namespace Passenger.Tests.EndToEnd.Controllers
         [Fact]
         public async Task given_existing_userid_driver_should_be_added()
         {     
-            var commandUser = new CreateUser
-            {
-                Email = "user5@email.com",
-                UserName = "user5",
-                Password = "secret"
-            };
-            var payloadUser = GetPayLoad(commandUser);
-            var responseUser = await Client.PostAsync("users", payloadUser);
-            var user = await GetUserAsync(commandUser.Email);
-            responseUser.StatusCode.ShouldBeEquivalentTo(HttpStatusCode.Created);
-
+            var email = "user1@email.com";
+            var user = await GetUserAsync(email);
             var commandDriver = new CreateDriver
             {
                 UserId = user.Id

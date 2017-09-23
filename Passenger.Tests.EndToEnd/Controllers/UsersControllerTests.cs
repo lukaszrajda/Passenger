@@ -38,9 +38,10 @@ namespace Passenger.Tests.EndToEnd.Controllers
         {
             var command = new CreateUser
             {
-                Email = "user4@email.com",
-                UserName = "user4",
-                Password = "secret"
+                Email = "user1001@email.com",
+                UserName = "user1001",
+                Password = "secret",
+                Role = "user"
             };
             var payload = GetPayLoad(command);
             var response = await Client.PostAsync("users", payload);

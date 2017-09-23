@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Passenger.Core.Domain;
@@ -12,12 +13,20 @@ namespace Passenger.Infrastructure.Services
         private readonly IDriverRepository _driverRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public DriverSerice(IDriverRepository driverRepository, IUserRepository userRepository, IMapper mapper)
+        public DriverSerice(IDriverRepository driverRepository, IUserRepository userRepository,
+            IMapper mapper)
         {
             _driverRepository = driverRepository;
             _userRepository = userRepository;
             _mapper = mapper;
         }
+
+        public async Task<IEnumerable<DriverDto>> BrowseAsync()
+        {
+            var drivers = await _driverRepository.BrowseAsync();
+            return _mapper.Map<IEnumerable<Driver>, IEnumerable<DriverDto>>(drivers);
+        }
+
         public async Task<DriverDto> GetAsync(Guid userId)
         {
             var driver = await _driverRepository.GetAsync(userId);
@@ -28,15 +37,26 @@ namespace Passenger.Infrastructure.Services
             var user = await _userRepository.GetAsync(userId);
             if (user == null)
             {
-                throw new InvalidOperationException($"User with id: {userId}, doesn't exists, so you cannot create driver.");
+                throw new InvalidOperationException($"User with ID: {userId}, does not exists, so you cannot create driver.");
             }
             var driver = await _driverRepository.GetAsync(userId);
             if(driver != null)
             {
-                throw new Exception($"Driver with UserID : {userId} already exists.");
+                throw new Exception($"Driver with ID : {userId} already exists.");
             }
-            driver = new Driver(userId);
+            driver = new Driver(user);
             await _driverRepository.AddAsync(driver);
+        }
+
+        public async Task SetVehicleAsync(Guid userId, string brand, string name, int seats)
+        {
+            var driver = await _driverRepository.GetAsync(userId);
+            if(driver == null)
+            {
+                throw new Exception($"Driver with ID : {userId} does not exists.");
+            }
+            driver.SetVehicle(brand, name, seats);
+            await _driverRepository.UpdateAsync(driver);
         }
     }
 }

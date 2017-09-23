@@ -19,8 +19,8 @@ namespace Passenger.Core.Domain
         {  
         }
 
-        public User(string email, string username,
-            string password, string salt, string role)
+        public User(Guid userId, string email, string username,
+            string password, string salt)
         {
             if (String.IsNullOrEmpty(username))
             {
@@ -30,7 +30,7 @@ namespace Passenger.Core.Domain
             SetEmail(email);
             SetUserName(username);
             SetPassword(password);
-            SetRole(role);
+            Id = userId;
             Salt = salt;
             CreatedAt = DateTime.UtcNow;
         }
