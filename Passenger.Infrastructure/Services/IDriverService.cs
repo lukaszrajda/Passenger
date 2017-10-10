@@ -8,9 +8,10 @@ namespace Passenger.Infrastructure.Services
 {
     public interface IDriverService : IService
     {
-        Task<DriverDto> GetAsync(Guid userId);
+        Task<DriverDetailDto> GetAsync(Guid userId);
         Task RegisterAsync(Guid userId);     
-        Task SetVehicleAsync(Guid userId, string brand, string name, int seats);
+        Task SetVehicleAsync(Guid userId, string brand, string name);
         Task<IEnumerable<DriverDto>> BrowseAsync();
+        Task DeleteDriver(Guid userId);
     }
 }

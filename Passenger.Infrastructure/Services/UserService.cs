@@ -5,6 +5,7 @@ using AutoMapper;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
+using Passenger.Infrastructure.Exceptions;
 
 namespace Passenger.Infrastructure.Services
 {
@@ -23,19 +24,19 @@ namespace Passenger.Infrastructure.Services
         public async Task<UserDto> GetAsync(string email)
         {
             var user = await _userRepository.GetAsync(email);
-            return _mapper.Map<User,UserDto>(user);
+            return _mapper.Map<UserDto>(user);
         }
         public async Task<UserDto> GetAsync(Guid userId)
         {
             var user = await _userRepository.GetAsync(userId);
-            return _mapper.Map<User,UserDto>(user);
+            return _mapper.Map<UserDto>(user);
         }
         public async Task RegisterAsync(Guid userId, string email, string username, string password, string role)
         {
             var user = await _userRepository.GetAsync(email);
             if(user != null)
             {
-                throw new Exception($"User with email: {email} already exists.");
+                throw new ServiceException(Exceptions.ErrorCodes.EmailInUse, $"User with email: {email} already exists.");
             }
             var salt = _encrypter.GetSalt(password);
             var hash = _encrypter.GetHash(password,salt);
@@ -49,20 +50,20 @@ namespace Passenger.Infrastructure.Services
             var user = await _userRepository.GetAsync(email);
             if(user == null)
             {
-                throw new Exception("Invalid credentials");
+                throw new ServiceException(Exceptions.ErrorCodes.InvalidCredentials, "Invalid credentials");
             }
             var hash = _encrypter.GetHash(password,user.Salt);
             if (user.Password == hash)
             {
                 return;
             }
-            throw new Exception("Invalid credentials");
+            throw new ServiceException(Exceptions.ErrorCodes.InvalidCredentials, "Invalid credentials");
         }
 
         public async Task<IEnumerable<UserDto>> BrowseAsync()
         {
             var users = await _userRepository.BrowseAsync();
-            return _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
+            return _mapper.Map<IEnumerable<UserDto>>(users);
         }
     }
 }

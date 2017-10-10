@@ -24,7 +24,7 @@ namespace Passenger.Core.Domain
         {
             if (String.IsNullOrEmpty(username))
             {
-                throw new Exception($"Username is empty.");
+                throw new DomainException($"Username is empty.");
             }
             Id = Guid.NewGuid();
             SetEmail(email);
@@ -38,7 +38,7 @@ namespace Passenger.Core.Domain
         {
             if (!EmailRegex.IsMatch(email))
             {
-                throw new Exception($"Email adress {email} is not valid email adress.");
+                throw new DomainException(ErrorCodes.InvalidEmail, $"Email adress {email} is not valid email adress.");
             }
             if (email == Email)
             {
@@ -51,7 +51,7 @@ namespace Passenger.Core.Domain
         {
             if (String.IsNullOrEmpty(userName))
             {
-                throw new Exception($"UserName is empty.");
+                throw new DomainException(ErrorCodes.InvalidUsername,"UserName can not be empty.");
             }
             if (userName == UserName)
             {
@@ -64,7 +64,7 @@ namespace Passenger.Core.Domain
         {
             if (String.IsNullOrEmpty(password))
             {
-                throw new Exception($"Password is empty.");
+                throw new DomainException(ErrorCodes.InvalidPassword ,"Password is empty.");
             }
             if (password == Password)
             {
@@ -77,7 +77,7 @@ namespace Passenger.Core.Domain
         {
             if (String.IsNullOrEmpty(role))
             {
-                throw new Exception($"Role is empty.");
+                throw new DomainException(ErrorCodes.InvalidRole, $"Role is empty.");
             }
             if (role == Role)
             {

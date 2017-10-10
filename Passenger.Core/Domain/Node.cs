@@ -59,7 +59,7 @@ namespace Passenger.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public static Node Create(string address, int longitude, int latitude)
+        public static Node Create(string address, double longitude, double latitude)
             => new Node(address, longitude, latitude);
     }
 }

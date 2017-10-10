@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,9 @@ namespace Passenger.Tests.EndToEnd.Controllers
         protected async Task<UserDto> GetUserAsync(string email)
         {
             var response = await Client.GetAsync($"users/{email}");
-
             var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<UserDto>(responseString);
+            var user = JsonConvert.DeserializeObject<UserDto>(responseString);      
+            return user;
         }
     }
 }

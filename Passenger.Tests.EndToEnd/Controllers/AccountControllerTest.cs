@@ -15,12 +15,12 @@ namespace Passenger.Tests.EndToEnd.Controllers
         [Fact]
         public async Task given_valid_current_and_new_password_should_change()
         {
-            var request = new ChangeUserPassword
+            var command = new ChangeUserPassword
             {
                 CurrentPassword = "secret",
                 NewPassword = "secret2"
             };
-            var payload = GetPayLoad(request);
+            var payload = GetPayLoad(command);
             var response = await Client.PutAsync("account/password", payload);
             response.StatusCode.ShouldBeEquivalentTo(HttpStatusCode.NoContent);
         }

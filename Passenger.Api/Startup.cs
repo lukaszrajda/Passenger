@@ -19,6 +19,10 @@ using Passenger.Infrastructure.IoC;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Passenger.Infrastructure.Settings;
+using Newtonsoft.Json;
+using Passenger.Api.Framework;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace Passenger.Api
 {
@@ -51,7 +55,8 @@ namespace Passenger.Api
             // services.AddScoped<IDriverService, DriverSerice>();
             services.AddAuthorization(x => x.AddPolicy("admin", p => p.RequireRole("admin")));
             services.AddMemoryCache();
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterModule(new ContainerModule(Configuration));
@@ -64,8 +69,11 @@ namespace Passenger.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
             ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            // loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            // loggerFactory.AddDebug();
+            loggerFactory.AddNLog();
+            app.AddNLogWeb();
+            env.ConfigureNLog("nlog.config");
 
             var jwtSettings = app.ApplicationServices.GetService<JwtSettings>();
             app.UseJwtBearerAuthentication(new JwtBearerOptions
@@ -85,6 +93,7 @@ namespace Passenger.Api
                 var dataInitializer = app.ApplicationServices.GetRequiredService<IDataInitializer>();
                 dataInitializer.SeedAsync();
             }
+            app.UseMiddleware(typeof(ExceptionHandlerMiddleware));
             app.UseMvc();
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }

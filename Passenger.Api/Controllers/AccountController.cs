@@ -20,19 +20,11 @@ namespace Passenger.Api.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        [Route("token/{email}")]
-        public IActionResult Get(string email)
-        {
-           var token = _jwtHandler.CreateToken(email, "admin");
-           return Json(token);
-        }
-
         [HttpPut]
         [Route("password")]
         public async Task<IActionResult> Put([FromBody]ChangeUserPassword command)
         {
-            await CommandDispatcher.DispatchAsync(command);
+            await DispatchAsync(command);
             return NoContent();
         }
         
